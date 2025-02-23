@@ -4,9 +4,41 @@
 import os
 import sys
 import argparse
+import fnmatch
 from fs import open_fs
 from fs.walk import Walker
-from fs.gitignore import GitIgnoreMatcher
+
+
+# Фильтр по расширениям файлов, которые будут использованы
+EXTENSIONS = [
+	'*.py',
+	# '*.txt',  # игнорировать сам файл directory_contents.txt, если он есть
+	'*.md', '*.json', '*.yaml', '*.yml',
+	'*.php',
+]
+
+class GitIgnoreMatcher:
+    def __init__(self, gitignore_path):
+        """Инициализирует matcher на основе файла .gitignore."""
+        self.patterns = []
+        if os.path.exists(gitignore_path):
+            with open(gitignore_path, 'r') as gitignore_file:
+                self.patterns = [
+                    line.strip() for line in gitignore_file
+                    if line.strip() and not line.startswith("#")
+                ]
+
+    def match(self, path):
+        """Проверяет, соответствует ли путь какому-либо правилу из .gitignore."""
+        for pattern in self.patterns:
+            # Игнорируем директории, если паттерн заканчивается на /
+            if pattern.endswith('/'):
+                if fnmatch.fnmatch(path, pattern[:-1]) or fnmatch.fnmatch(path, pattern + "*"):
+                    return True
+            else:
+                if fnmatch.fnmatch(path, pattern) or fnmatch.fnmatch(os.path.basename(path), pattern):
+                    return True
+        return False
 
 def read_file_content(fs, path):
     """Читает содержимое файла и возвращает его как строку."""
@@ -20,13 +52,13 @@ def generate_directory_contents(directory_path, use_gitignore):
 
     # Если используется .gitignore, создаём matcher
     ignore_matcher = None
-    if use_gitignore and fs.exists('.gitignore'):
-        with fs.open('.gitignore', 'r') as gitignore_file:
-            ignore_patterns = gitignore_file.read().splitlines()
-        ignore_matcher = GitIgnoreMatcher(ignore_patterns)
+    if use_gitignore:
+        gitignore_path = os.path.join(directory_path, '.gitignore')
+        if os.path.exists(gitignore_path):
+            ignore_matcher = GitIgnoreMatcher(gitignore_path)
 
     # Рекурсивно обходим директорию
-    walker = Walker(filter=['*.py', '*.txt', '*.md', '*.json', '*.yaml', '*.yml'])  # Фильтр по расширениям
+    walker = Walker(filter=EXTENSIONS)  # Фильтр по расширениям
     for path in walker.files(fs):
         # Пропускаем файлы, если они соответствуют .gitignore
         if ignore_matcher and ignore_matcher.match(path):
