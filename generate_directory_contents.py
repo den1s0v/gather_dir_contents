@@ -78,7 +78,7 @@ def generate_directory_contents(directory_path, use_gitignore):
 
     # Сохраняем результат в файл
     output_path = os.path.join(directory_path, 'directory_contents.txt')
-    with open(output_path, 'w') as output_file:
+    with open(output_path, 'w', encoding='utf-8') as output_file:
         output_file.write("\n".join(output_lines))
 
     print(f"Directory contents saved to {output_path}")
