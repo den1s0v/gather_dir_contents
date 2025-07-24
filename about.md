@@ -307,7 +307,7 @@ secrets.txt
 
 Тогда файл `directory_contents.txt` будет содержать только:
 ```
-===== /src/main.py (10 lines) =====
+===== /src/main.py (7 lines) =====
 import utils
 
 def main():
@@ -317,7 +317,7 @@ if __name__ == "__main__":
     main()
 ===== End of /src/main.py =====
 
-===== /src/utils.py (5 lines) =====
+===== /src/utils.py (2 lines) =====
 def helper():
     return "This is a helper function."
 ===== End of /src/utils.py =====
