@@ -17,8 +17,14 @@ EXTENSIONS = [
 	'*.php',
 ]
 
+IGNORE_FILE_PATTERNS = [
+    'LICENSE',
+    'LICENSE.*',
+]
+
+
 class GitIgnoreMatcher:
-    def __init__(self, gitignore_path):
+    def __init__(self, gitignore_path, ignore_custom=IGNORE_FILE_PATTERNS):
         """Инициализирует matcher на основе файла .gitignore."""
         self.patterns = []
         if os.path.exists(gitignore_path):
@@ -27,6 +33,8 @@ class GitIgnoreMatcher:
                     line.strip() for line in gitignore_file
                     if line.strip() and not line.startswith("#")
                 ]
+        if ignore_custom:
+	        self.patterns += ignore_custom
 
     def match(self, path):
         """Проверяет, соответствует ли путь какому-либо правилу из .gitignore."""
@@ -54,8 +62,7 @@ def generate_directory_contents(directory_path, use_gitignore):
     ignore_matcher = None
     if use_gitignore:
         gitignore_path = os.path.join(directory_path, '.gitignore')
-        if os.path.exists(gitignore_path):
-            ignore_matcher = GitIgnoreMatcher(gitignore_path)
+        ignore_matcher = GitIgnoreMatcher(gitignore_path)
 
     # Рекурсивно обходим директорию
     walker = Walker(filter=EXTENSIONS)  # Фильтр по расширениям
