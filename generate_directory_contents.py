@@ -11,10 +11,10 @@ from fs.walk import Walker
 
 # Фильтр по расширениям файлов, которые будут использованы
 EXTENSIONS = [
-	'*.py',
-	# '*.txt',  # игнорировать сам файл directory_contents.txt, если он есть
-	'*.md', '*.json', '*.yaml', '*.yml',
-	'*.php',
+    '*.py',
+    # '*.txt',  # игнорировать сам файл directory_contents.txt, если он есть
+    '*.md', '*.json', '*.yaml', '*.yml',
+    '*.php',
 ]
 
 IGNORE_FILE_PATTERNS = [
@@ -34,7 +34,7 @@ class GitIgnoreMatcher:
                     if line.strip() and not line.startswith("#")
                 ]
         if ignore_custom:
-	        self.patterns += ignore_custom
+            self.patterns += ignore_custom
 
     def match(self, path):
         """Проверяет, соответствует ли путь какому-либо правилу из .gitignore."""
