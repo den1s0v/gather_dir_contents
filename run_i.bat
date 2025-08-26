@@ -1,1 +1,2 @@
-python generate_directory_contents.py -i %1
+python generate_directory_contents.py -i %*
+rem pause
