@@ -1,5 +1,5 @@
 # Python
-# 23.02.2025
+# Since 23.02.2025
 # pip install fs
 import os
 import sys
@@ -12,6 +12,7 @@ from fs.walk import Walker
 # Фильтр по расширениям файлов, которые будут использованы
 EXTENSIONS = [
     '*.py',
+    '*.java',
     # '*.txt',  # игнорировать сам файл directory_contents.txt, если он есть
     '*.md', '*.json', '*.yaml', '*.yml',
     '*.php',
@@ -28,7 +29,7 @@ class GitIgnoreMatcher:
         """Инициализирует matcher на основе файла .gitignore."""
         self.patterns = []
         if os.path.exists(gitignore_path):
-            with open(gitignore_path, 'r') as gitignore_file:
+            with open(gitignore_path, 'r', encoding='utf-8') as gitignore_file:
                 self.patterns = [
                     line.strip() for line in gitignore_file
                     if line.strip() and not line.startswith("#")
